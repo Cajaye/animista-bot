@@ -12,11 +12,12 @@ process.on('unhandledRejection', (reason, promise) => {
     console.log(reason)
 })
 
+const date = new Intl.DateTimeFormat("en-US").format(new Date())
 
 require('dotenv').config();
 let url = `https://animechan.vercel.app/api/`
 const axios = require('axios').default;
-const { Client, Intents } = require("discord.js");
+const { Client, Intents, MessageEmbed } = require("discord.js");
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
@@ -33,7 +34,11 @@ client.on("interactionCreate", async interaction => {
                 return interaction.reply(`Try again`);
             }
             const { anime, character, quote } = res.data;
-            await interaction.reply(`Anime: ${anime},\nCharacter: ${character},\nQuote: ${quote}`);
+            const message = new MessageEmbed()
+                .setColor('#0099ff').setTitle('Animista')
+                .setDescription('Get a random anime quote')
+                .setTimestamp().addFields({ name: "Anime", value: anime }, { name: "Character", value: character }, { name: "Quote", value: quote })
+            await interaction.reply({ embeds: [message] });
         }
     } catch (error) {
         let msg = 'There was an error while executing this command!'
