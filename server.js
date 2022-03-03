@@ -12,36 +12,25 @@ process.on('unhandledRejection', (reason, promise) => {
     console.log(reason)
 })
 
-const date = new Intl.DateTimeFormat("en-US").format(new Date())
-
 require('dotenv').config();
-let url = `https://animechan.vercel.app/api/`
-const axios = require('axios').default;
-const { Client, Intents, MessageEmbed } = require("discord.js");
-
+const { Client, Intents, Collection } = require("discord.js");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+
+client.commands = new Collection();
 
 client.once('ready', () => {
     console.log('Ready!');
 });
 
 client.on("interactionCreate", async interaction => {
+    if (!interaction.isCommand()) return;
+
+    const command = client.commands.get(interaction.commandName);
+
+    if (!command) return;
+
     try {
-        if (!interaction.isCommand()) return;
-        if (interaction.commandName === 'quote' || interaction.commandName === "animista") {
-            const res = await axios.get(`${url}random`);
-            if (res.status == 404) {
-                return interaction.reply(`Try again`);
-            }
-            const { anime, character, quote } = res.data;
-            const message = new MessageEmbed()
-                .setColor('#0099ff').setTitle('Animista')
-                .setURL('https://animista.vercel.app/')
-                .setDescription('Get a random anime quote')
-                .setTimestamp()
-                .addFields({ name: "Anime", value: anime }, { name: "Character", value: character }, { name: "Quote", value: quote })
-            await interaction.reply({ embeds: [message] });
-        }
+        await command.execute(interaction);
     } catch (error) {
         let msg = 'There was an error while executing this command!'
         console.error(error);
