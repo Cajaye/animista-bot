@@ -36,8 +36,10 @@ client.on("interactionCreate", async interaction => {
             const { anime, character, quote } = res.data;
             const message = new MessageEmbed()
                 .setColor('#0099ff').setTitle('Animista')
+                .setURL('https://animista.vercel.app/')
                 .setDescription('Get a random anime quote')
-                .setTimestamp().addFields({ name: "Anime", value: anime }, { name: "Character", value: character }, { name: "Quote", value: quote })
+                .setTimestamp()
+                .addFields({ name: "Anime", value: anime }, { name: "Character", value: character }, { name: "Quote", value: quote })
             await interaction.reply({ embeds: [message] });
         }
     } catch (error) {
